@@ -20,10 +20,9 @@ import java.util.Map;
  * @author Silas
  */
 public class HTTPHelper {
-    //https://financasapi.herokuapp.com/api/usuario/signup
-
-//    public static final String URL_BASE = "http://localhost:8080/financasServer/api";
-    public static final String URL_BASE = "http://financasapi.herokuapp.com/api";
+    
+    public static final String URL_BASE = "http://localhost:8080/financasServer/api";
+//    public static final String URL_BASE = "http://financasapi.herokuapp.com/api";
 
     public String sendGet(String endpoint, Map<String, String> header) throws IOException {
         URL obj = new URL(endpoint);

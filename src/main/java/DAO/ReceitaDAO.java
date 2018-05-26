@@ -22,7 +22,7 @@ public class ReceitaDAO {
 
     private static final Connection con = new PostgreSQLJDBC().getConnection();
 
-    public void insert(Receita receita) {
+    public boolean insert(Receita receita) {
 
         try {
             PreparedStatement p = con.prepareStatement("insert into receita (id_contato, id_usuario, id_categoria,"
@@ -33,77 +33,68 @@ public class ReceitaDAO {
             p.setLong(3, receita.getCategoriaId());
             p.setString(4, receita.getTitulo());
             p.setString(5, receita.getDescricao());
-            try {
-                p.setDate(6, new java.sql.Date(receita.getCadastro().getTime()));
-            } catch (NullPointerException e) {
-                p.setDate(6, null);
-            }
-            try {
-                p.setDate(7, new java.sql.Date(receita.getAlteracao().getTime()));
-            } catch (NullPointerException e) {
-                p.setDate(7, null);
-            }
-            try {
-                p.setDate(8, new java.sql.Date(receita.getVencimento().getTime()));
-            } catch (NullPointerException e) {
-                p.setDate(8, null);
-            }
+            p.setString(6, receita.getCadastro());
+            p.setString(7, receita.getAlteracao());
+            p.setString(8, receita.getVencimento());
             p.setBigDecimal(9, receita.getValor());
             p.setBoolean(10, receita.isFixo());
             p.setBoolean(11, receita.isPago());
             p.setBoolean(12, receita.isParcelado());
+            
             p.execute();
             p.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
 
     }
 
-    public void delete(Receita receita) throws Exception {
-        PreparedStatement p = con.prepareStatement("delete from receita where id_receita = ?");
-        p.setLong(1, receita.getReceitaId());
-        p.execute();
-        p.close();
+    public boolean delete(long pIdReceita) throws Exception {
+        try {
+            PreparedStatement p = con.prepareStatement("delete from receita where id_receita = ?");
+            p.setLong(1, pIdReceita);
+            p.execute();
+            p.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
-    public void update(Receita receita) throws Exception {
-        PreparedStatement p = con.prepareStatement("update receita set id_contato = ?, id_usuario = ?, id_categoria = ?, "
-                + "titulo = ?, descricao = ?, dt_cadastro = ?, dt_alteracao = ?, dt_vencimento = ?, valor = ?, fixo = ?, "
-                + "pago = ?, parcelado  = ? where id_receita = ?");
-        p.setLong(1, receita.getContatoId());
-        p.setLong(2, receita.getUsuarioId());
-        p.setLong(3, receita.getCategoriaId());
-        p.setString(4, receita.getTitulo());
-        p.setString(5, receita.getDescricao());
+    public boolean update(Receita receita) throws Exception {
         try {
-            p.setDate(6, new java.sql.Date(receita.getCadastro().getTime()));
-        } catch (NullPointerException e) {
-            p.setDate(6, null);
+            PreparedStatement p = con.prepareStatement("update receita set id_contato = ?, id_usuario = ?, id_categoria = ?, "
+                    + "titulo = ?, descricao = ?, dt_cadastro = ?, dt_alteracao = ?, dt_vencimento = ?, valor = ?, fixo = ?, "
+                    + "pago = ?, parcelado  = ? where id_receita = ?");
+            p.setLong(1, receita.getContatoId());
+            p.setLong(2, receita.getUsuarioId());
+            p.setLong(3, receita.getCategoriaId());
+            p.setString(4, receita.getTitulo());
+            p.setString(5, receita.getDescricao());
+            p.setString(6, receita.getCadastro());
+            p.setString(7, receita.getAlteracao());
+            p.setString(8, receita.getVencimento());
+            p.setBigDecimal(9, receita.getValor());
+            p.setBoolean(10, receita.isFixo());
+            p.setBoolean(11, receita.isPago());
+            p.setBoolean(12, receita.isParcelado());
+
+            p.executeUpdate();
+            p.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
-        try {
-            p.setDate(7, new java.sql.Date(receita.getAlteracao().getTime()));
-        } catch (NullPointerException e) {
-            p.setDate(7, null);
-        }
-        try {
-            p.setDate(8, new java.sql.Date(receita.getVencimento().getTime()));
-        } catch (NullPointerException e) {
-            p.setDate(8, null);
-        }
-        p.setBigDecimal(9, receita.getValor());
-        
-        p.setBoolean(10, receita.isFixo());
-        p.setBoolean(11, receita.isPago());
-        p.setBoolean(12, receita.isParcelado());
-        
-        p.executeUpdate();
-        p.close();
+        return true;
+
     }
 
     public List<Receita> list(Long idPerson) throws Exception {
         List<Receita> receitas = new ArrayList<>();
-        PreparedStatement p = con.prepareStatement("select * from receita where id_person = "+idPerson);
+        PreparedStatement p = con.prepareStatement("select * from receita where id_person = " + idPerson);
         ResultSet rs = p.executeQuery();
         while (rs.next()) {
             Receita receita = new Receita();
@@ -113,10 +104,10 @@ public class ReceitaDAO {
             receita.setCategoriaId(rs.getLong("id_categoria"));
             receita.setTitulo(rs.getString("titulo"));
             receita.setDescricao(rs.getString("descricao"));
-            receita.setVencimento(rs.getDate("vencimento"));
+            receita.setVencimento(rs.getString("vencimento"));
             receita.setValor(rs.getBigDecimal("valor"));
-            receita.setCadastro(rs.getDate("dt_cadastro"));
-            receita.setAlteracao(rs.getDate("alteracao"));
+            receita.setCadastro(rs.getString("dt_cadastro"));
+            receita.setAlteracao(rs.getString("alteracao"));
             receita.setFixo(rs.getBoolean("fixed"));
             receita.setPago(rs.getBoolean("pago"));
             receita.setParcelado(rs.getBoolean("parcelado"));
@@ -127,10 +118,10 @@ public class ReceitaDAO {
         p.close();
         return receitas;
     }
-    
+
     public static List<Receita> search(String collumnName, String search, Long usuarioId) throws Exception {
         List<Receita> receitas = new ArrayList<>();
-        PreparedStatement p = con.prepareStatement("select * from receita where "+collumnName+" like '%"+search+"%' and person_id = "+usuarioId);
+        PreparedStatement p = con.prepareStatement("select * from receita where " + collumnName + " like '%" + search + "%' and person_id = " + usuarioId);
         ResultSet rs = p.executeQuery();
         while (rs.next()) {
             Receita receita = new Receita();
@@ -140,10 +131,10 @@ public class ReceitaDAO {
             receita.setCategoriaId(rs.getLong("id_categoria"));
             receita.setTitulo(rs.getString("titulo"));
             receita.setDescricao(rs.getString("descricao"));
-            receita.setVencimento(rs.getDate("vencimento"));
+            receita.setVencimento(rs.getString("vencimento"));
             receita.setValor(rs.getBigDecimal("valor"));
-            receita.setCadastro(rs.getDate("dt_cadastro"));
-            receita.setAlteracao(rs.getDate("alteracao"));
+            receita.setCadastro(rs.getString("dt_cadastro"));
+            receita.setAlteracao(rs.getString("alteracao"));
             receita.setFixo(rs.getBoolean("fixed"));
             receita.setPago(rs.getBoolean("pago"));
             receita.setParcelado(rs.getBoolean("parcelado"));
@@ -154,9 +145,10 @@ public class ReceitaDAO {
         p.close();
         return receitas;
     }
+
     public List<Receita> findById(Long id) throws Exception {
         List<Receita> receitas = new ArrayList<>();
-        PreparedStatement p = con.prepareStatement("select * from receita where id_receita = "+id);
+        PreparedStatement p = con.prepareStatement("select * from receita where id_receita = " + id);
         ResultSet rs = p.executeQuery();
         while (rs.next()) {
             Receita receita = new Receita();
@@ -166,10 +158,10 @@ public class ReceitaDAO {
             receita.setCategoriaId(rs.getLong("id_categoria"));
             receita.setTitulo(rs.getString("titulo"));
             receita.setDescricao(rs.getString("descricao"));
-            receita.setVencimento(rs.getDate("vencimento"));
+            receita.setVencimento(rs.getString("vencimento"));
             receita.setValor(rs.getBigDecimal("valor"));
-            receita.setCadastro(rs.getDate("dt_cadastro"));
-            receita.setAlteracao(rs.getDate("alteracao"));
+            receita.setCadastro(rs.getString("dt_cadastro"));
+            receita.setAlteracao(rs.getString("alteracao"));
             receita.setFixo(rs.getBoolean("fixed"));
             receita.setPago(rs.getBoolean("pago"));
             receita.setParcelado(rs.getBoolean("parcelado"));

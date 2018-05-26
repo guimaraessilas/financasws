@@ -6,6 +6,8 @@
 package Model;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -20,14 +22,34 @@ public class Despesa {
     private Long categoriaId;
     private String titulo;
     private String descricao;
-    private Date vencimento;
-    private Date cadastro;
-    private Date alteracao;
+    private String vencimento;
+    private String cadastro;
+    private String alteracao;
     private BigDecimal valor;
     private boolean pago;
     private boolean fixo;
     private boolean parcelado;
 
+    public Despesa() {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+        this.despesaId = 0L;
+        this.contatoId = 0L;
+        this.usuarioId = 0L;
+        this.categoriaId = 0L;
+        this.titulo = "";
+        this.descricao = "";
+        this.vencimento = "";
+        this.cadastro = df.format(new Date());
+        this.alteracao = "";
+        this.valor = BigDecimal.ZERO;
+        this.pago = false;
+        this.fixo = false;
+        this.parcelado = false;
+    }
+
+    
+    
     public Long getDespesaId() {
         return despesaId;
     }
@@ -76,30 +98,32 @@ public class Despesa {
         this.descricao = descricao;
     }
 
-    public Date getVencimento() {
+    public String getVencimento() {
         return vencimento;
     }
 
-    public void setVencimento(Date vencimento) {
+    public void setVencimento(String vencimento) {
         this.vencimento = vencimento;
     }
 
-    public Date getCadastro() {
+    public String getCadastro() {
         return cadastro;
     }
 
-    public void setCadastro(Date cadastro) {
+    public void setCadastro(String cadastro) {
         this.cadastro = cadastro;
     }
 
-    public Date getAlteracao() {
+    public String getAlteracao() {
         return alteracao;
     }
 
-    public void setAlteracao(Date alteracao) {
+    public void setAlteracao(String alteracao) {
         this.alteracao = alteracao;
     }
 
+    
+    
     public BigDecimal getValor() {
         return valor;
     }

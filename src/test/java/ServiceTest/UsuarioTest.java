@@ -10,8 +10,6 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.ProtocolException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,10 +28,10 @@ public class UsuarioTest {
         header.put("Content-Type", "application/json");
         Gson gson = new Gson();
         Usuario usuario = new Usuario();
-        //usuario.setNome("Mirella Queiroz");
-        usuario.setEmail("queiroz.av@gmail.com");
+        usuario.setNome("Mirella Queiroz");
+        usuario.setEmail("queiroz.av1@gmail.com");
         usuario.setSenha("teste1");
-        //usuario.setNascimento("1996-01-07");
+        usuario.setNascimento("1996-01-07");
         
         System.out.println("Requisiçao: \n" + gson.toJson(usuario, Usuario.class));
 
@@ -42,7 +40,7 @@ public class UsuarioTest {
         //test.loginTest(gson.toJson(usuario, Usuario.class), header);
 
 //        System.out.println("Cadastrando...");
-  //      test.signUpTest(gson.toJson(usuario, Usuario.class), header);
+        test.signUpTest(gson.toJson(usuario, Usuario.class), header);
 
     //    System.out.println("Tentando Login de usuario recem cadastrado");
         test.loginTest(gson.toJson(usuario, Usuario.class), header);
@@ -59,4 +57,5 @@ public class UsuarioTest {
         String endpoint = URL + "/signup";
         System.out.println(HELPER.sendPost(endpoint, request, header));
     }
+
 }
